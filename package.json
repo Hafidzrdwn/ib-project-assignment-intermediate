@@ -17,6 +17,7 @@
         "vue": "^3.2.37"
     },
     "dependencies": {
-        "@develoka/angka-rupiah-js": "^1.0.3"
+        "@develoka/angka-rupiah-js": "^1.0.3",
+        "sweetalert2": "^11.4.37"
     }
 }

@@ -1,10 +1,12 @@
 <template>
   <div>
     <Heading title="Semua Produk" classProps="h2 mt-4 mb-3" :count="productsCount" />
-    <Table :datas="formatedProducts" :columns="columns">
-      <template v-slot:action>
-        <Button text="Add to Cart" color="btn-outline-primary" />
-        <Button text="Add all item" />
+    <Table :datas="formatedProducts" :columns="columns" :giveAction="getStockAllProducts > 0">
+      <template #action="{data}">
+        <div v-if="data.stock > 0">
+          <Button text="Add to Cart" color="btn-outline-primary" @emitClick="addCart(data)" />
+          <Button text="Add all stock" @emitClick="addAllStock(data)" />
+        </div>
       </template>
     </Table>
   </div>
@@ -18,10 +20,13 @@ import toRupiah from '@develoka/angka-rupiah-js';
 
 export default {
   name: 'Product',
-  mounted () {
-    console.log(this.products)
-  },
+  props: ['products'],
   computed: {
+    getStockAllProducts() {
+      return this.products.reduce((acc, product) => {
+        return acc + product.stock
+      }, 0)
+    },
     productsCount () {
       return ` (${this.products.length})`
     },
@@ -33,35 +38,14 @@ export default {
           desc: product.desc,
           price: toRupiah(product.price, {formal:false,floatingPoint: 0}),
           stock: product.stock,
+          total: product.total,
+          qty: product.qty
         }
       })
     }
   },
   data() {
     return {
-      products: [
-        {
-          id: 1,
-          name: 'Indomie Goreng Rendang',
-          desc: 'Masakan instan terenak di dunia',
-          price: 3900,
-          stock: 55
-        },
-        {
-          id: 2,
-          name: 'Mie Gelas Rendang',
-          desc: 'Mie instant khusus anak kosan',
-          price: 1500,
-          stock: 25
-        },
-        {
-          id: 3,
-          name: 'Bakmi Mewah',
-          desc: 'Kalau anak kosan jangan macam2 deh',
-          price: 10000,
-          stock: 80
-        },
-      ],
       columns: [
         {
           title: 'Name',
@@ -86,6 +70,16 @@ export default {
     Heading,
     Table,
     Button
+  },
+  methods: {
+    addCart(data) {
+      const id = data.id
+      this.$emit('addItem', id)
+    },
+    addAllStock(data) {
+      const id = data.id
+      this.$emit('addAllStock', id)
+    }
   }
 }
 </script>

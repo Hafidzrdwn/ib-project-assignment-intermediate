@@ -5,25 +5,37 @@
     :datas="carts" :columns="columns" 
     :withFooter="true" :footers="footers"
     emptyMessage="Keranjang belanja kosong."
-    />
+    :giveAction="(carts.length > 0)"
+    >
+      <template #action="{data}">
+        <Button text="Delete item" color="btn-outline-danger" @emitClick="deleteItem(data)" />
+        <Button text="Delete all item" color="btn-danger" @emitClick="deleteAllStock(data)"/>
+      </template>
+    </Table>
   </div>
 </template>
 
 <script>
 import Heading from './HeadingComponent.vue'
 import Table from './TableComponent.vue'
+import Button from './ButtonComponent.vue'
 import toRupiah from '@develoka/angka-rupiah-js'
 
 export default {
   name: 'Cart',
+  props: ['carts', 'totalQty', 'totalPrice'],
+  components: {
+    Heading,
+    Table,
+    Button
+  },
   computed: {
     cartsCount() {
       return ` (${this.carts.length})`
-    }
+    },
   },
   data() {
     return {
-      carts: [],
       columns: [
         {
           title: 'Name',
@@ -35,25 +47,45 @@ export default {
         },
         {
           title: 'Price',
-          field: 'price'
+          field: 'total'
         },
       ],
       footers: [
         {
-          value: 'Total'
+          value: 'Total:'
         },
         {
-          value: '0'
+          value: this.totalQty
         },
         {
-          value: toRupiah(0, {formal:false,floatingPoint: 0})
+          value: toRupiah(this.totalPrice, {formal:false,floatingPoint: 0})
         }
       ]
     }
   },
-  components: {
-    Heading,
-    Table
+  watch: {
+    totalQty: {
+      immediate: true,
+      handler() {
+        this.footers[1].value = this.totalQty
+      }
+    },
+    totalPrice: {
+      immediate: true,
+      handler() {
+        this.footers[2].value = toRupiah(this.totalPrice, {formal:false,floatingPoint: 0})
+      }
+    }
+  },
+  methods: {
+    deleteItem(data) {
+      const id = data.id
+      this.$emit('deleteItem', id)
+    },
+    deleteAllStock(data) {
+      const id = data.id
+      this.$emit('deleteAllStock', id)
+    }
   }
 }
 </script>

@@ -7,7 +7,7 @@
             <th v-for="(column, index) in columns" :key="index">
               {{ column.title }}
             </th>
-            <th>Action</th>
+            <th v-if="giveAction">Action</th>
           </tr>
         </thead>
         <tbody v-if="datas.length > 0">
@@ -16,7 +16,7 @@
               {{ data[column.field] }}
             </td>
             <td>
-              <slot name="action"></slot>
+              <slot name="action" :data="data"></slot>
             </td>
           </tr>
         </tbody>
@@ -63,6 +63,10 @@ export default {
     emptyMessage: {
       type: String,
       default: 'No data available.'
+    },
+    giveAction: {
+      type: Boolean,
+      default: false
     }
   }
 }
