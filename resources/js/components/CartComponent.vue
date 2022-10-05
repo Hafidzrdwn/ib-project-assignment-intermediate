@@ -34,6 +34,13 @@ export default {
       return ` (${this.carts.length})`
     },
   },
+  mounted() { 
+    if(!localStorage.getItem('carts') || !localStorage.getItem('total_qty') || !localStorage.getItem('total_price')) {
+      localStorage.setItem('carts', JSON.stringify(this.carts))
+      localStorage.setItem('total_qty', this.totalQty)
+      localStorage.setItem('total_price', this.totalPrice)
+    }
+  },
   data() {
     return {
       columns: [

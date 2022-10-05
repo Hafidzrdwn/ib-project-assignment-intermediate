@@ -25,6 +25,13 @@ export default {
     Cart,
     Button
   },
+  mounted() {
+    if(localStorage.getItem('carts') && localStorage.getItem('total_qty') && localStorage.getItem('total_price')) {
+      this.carts = JSON.parse(localStorage.getItem('carts'))
+      this.total_qty = localStorage.getItem('total_qty')
+      this.total_price = localStorage.getItem('total_price')
+    }
+  },
   data() {
     return {
       total_qty: 0,
@@ -76,6 +83,7 @@ export default {
       }
 
       this.updateTotal(this.carts)
+      localStorage.setItem('carts', JSON.stringify(this.carts))
     },
     findProductInCart(id) {
       return this.carts.find(cart => cart.id === id)
@@ -153,6 +161,7 @@ export default {
       }
 
       this.updateTotal(this.carts)
+      localStorage.setItem('carts', JSON.stringify(this.carts))
     },
     deleteAllItem(id) {
       const prd = this.findProductInCart(id)
@@ -169,6 +178,7 @@ export default {
 
       this.carts = this.carts.filter(cart => cart.id !== id)
       this.updateTotal(this.carts)
+      localStorage.setItem('carts', JSON.stringify(this.carts))
     },
     totalQty(carts) {
       let total = 0
@@ -176,6 +186,7 @@ export default {
         total += cart.qty
       })
       this.total_qty = total
+      localStorage.setItem('total_qty', total)
     },
     totalPrice() {
       let total = 0
@@ -184,6 +195,7 @@ export default {
       })
 
       this.total_price = total
+      localStorage.setItem('total_price', total)
     },
     checkout() {
       Swal.fire({
@@ -204,6 +216,8 @@ export default {
           this.total_qty = 0
           this.total_price = 0
           this.carts = []
+
+          localStorage.clear()
 
         }
       })
